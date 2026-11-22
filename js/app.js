@@ -396,6 +396,7 @@
     answer: 0,
     answered: false,
     optionEls: [],
+    sceneTimer: 0,
     timerRaf: 0,
     timerToken: 0,
     startTime: 0,
@@ -415,13 +416,16 @@
       b.style.left = x + 'px';
       b.style.bottom = trailBottomAt(x) + 'px';
       b.dataset.i = i;
-      b.setAttribute('aria-label', 'Recuerdo ' + (i + 1) + ': ' + q.name + ', año ' + q.year);
+      b.dataset.character = q.characterKey || 'guide';
+      b.dataset.action = q.actionKey || 'guide';
+      b.setAttribute('aria-label', 'Recuerdo ' + (i + 1) + ': ' + (q.character || q.name) + ', ' + q.year + '. ' + (q.action || q.scene));
       b.innerHTML =
         '<span class="marker__beam"></span>' +
         '<span class="marker__hint">¡TÓCAME!</span>' +
         '<span class="marker__lantern"><span class="marker__face"></span><span class="marker__symbol">' + q.icon + '</span></span>' +
         '<span class="marker__sign"><span class="marker__year">' + q.year + '</span>' +
-        '<span class="marker__name">' + q.scene + '</span>' +
+        '<span class="marker__name">' + (q.character || q.scene) + '</span>' +
+        '<span class="marker__action">' + (q.actionLabel || q.scene) + '</span>' +
         '<span class="marker__state">RECUERDO ' + (i + 1) + '</span></span>';
       b.addEventListener('click', () => onMarkerClick(i));
       wrap.appendChild(b);
@@ -458,7 +462,8 @@
     }
     if (isModalOpen()) return;
     Sfx.click();
-    walkToMarker(i);
+    if (Math.abs(W.x - M[i].x) < 70) openCurrentQuestion();
+    else walkToMarker(i);
   }
 
   function resetWorld() {
@@ -472,6 +477,8 @@
     $('#player').style.bottom = trailBottomAt(W.x) + 'px';
     $('#player').dataset.walking = '0';
     $('#player').dataset.facing = 'right';
+    $('#player').dataset.character = 'guide';
+    delete $('#player').dataset.action;
     const vw = $('#world').clientWidth || window.innerWidth;
     W.vw = vw;
     W.cam = clamp(W.x - vw * 0.45, 0, Math.max(0, STAGE_WIDTH - vw));
@@ -542,14 +549,14 @@
     $('#player').style.left = W.x.toFixed(1) + 'px';
     $('#player').style.bottom = trailBottomAt(W.x) + 'px';
 
-    // llegada al recuerdo activo
+    // Detenerse en el recuerdo; el jugador inicia el evento con espacio.
     const m = M[G.idx];
     if (G.awaitingQuestion && m && !locked && Math.abs(W.x - m.x) < 26) {
       W.x = m.x;
       W.targetX = null;
       G.awaitingQuestion = false;
       $('#player').dataset.walking = '0';
-      setTimeout(() => { if (!isModalOpen() && G.mode === 'story') openCurrentQuestion(); }, 180);
+      toast('¡Llegaste! Pulsa ESPACIO para vivir el recuerdo.');
     }
 
     // cámara suave
@@ -562,12 +569,13 @@
     renderWorld();
 
     // botón "ir al recuerdo"
-    const near = m ? Math.abs(W.x - m.x) < 44 : true;
-    const showGo = G.mode === 'story' && m && !near && !locked && !G.awaitingQuestion;
+    const near = m ? Math.abs(W.x - m.x) < 70 : true;
+    const showGo = G.mode === 'story' && m && !locked && !G.awaitingQuestion;
     if (showGo !== W.goShown) {
       W.goShown = showGo;
       $('#btn-go').hidden = !showGo;
     }
+    if (showGo) $('#btn-go').textContent = near ? 'ENTRAR AL RECUERDO · ESPACIO' : 'IR AL RECUERDO ▶';
 
     requestAnimationFrame(frame);
   }
@@ -581,7 +589,16 @@
       year: item.year,
       name: item.name,
       icon: item.icon,
+      character: item.character,
+      characterKey: item.characterKey,
       question: item.question,
+      scene: item.scene,
+      action: item.action,
+      actionKey: item.actionKey,
+      actionLabel: item.actionLabel,
+      actionProp: item.actionProp,
+      landmarks: item.landmarks || [],
+      hint: item.hint,
       opts: mixed,
       answer: mixed.findIndex((o) => o.ok),
       fact: item.fact,
@@ -597,7 +614,16 @@
       year: 'RETO',
       name: 'Dato concreto',
       icon: '⏱️',
+      character: 'Guía de rescate',
+      characterKey: 'guide',
       question: item.q,
+      scene: 'Campamento de rescate',
+      action: 'Te muestra una pista para recuperar una vida.',
+      actionKey: 'rescue',
+      actionLabel: 'PISTA RÁPIDA',
+      actionProp: '🪢',
+      landmarks: ['🌿', '⛰️', '✨'],
+      hint: 'Recuerda el dato histórico que ya aprendiste.',
       opts: opts,
       answer: opts.findIndex((o) => o.ok),
       fact: item.fact,
@@ -610,10 +636,12 @@
     if (G.mode !== 'story') return;
     const item = G.queue[G.idx];
     if (!item) return;
+    G.awaitingQuestion = false;
     openQuestion(item, 'story');
   }
 
   function openQuestion(item, mode) {
+    stopTimer();
     G.q = item;
     G.answer = item.answer;
     G.answered = false;
@@ -623,8 +651,13 @@
     const mini = isRescue
       ? { id: 'rescue', name: 'RESCATE', hint: 'Elige rápido la pista correcta', icons: ['🪢', '🪶', '🪨'] }
       : MINI_GAMES[miniIndex % MINI_GAMES.length];
-    $('#qcard').classList.toggle('is-rescue', isRescue);
-    $('#qcard').dataset.minigame = mini.id;
+    const card = $('#qcard');
+    $('#modal-q').classList.toggle('modal--event', mode === 'story');
+    card.classList.toggle('is-rescue', isRescue);
+    card.classList.remove('is-answered');
+    card.classList.add('is-intro');
+    card.classList.remove('is-ready');
+    card.dataset.minigame = mini.id;
     if (isRescue) {
       $('#qcard-mode').textContent = '⚠ RESCATE · 5 SEGUNDOS';
     } else if (G.mode === 'review') {
@@ -633,10 +666,34 @@
       $('#qcard-mode').textContent = '⛰ ' + mini.name + ' · ' + (G.idx + 1) + ' DE ' + TOTAL_STORY;
     }
 
+    const character = item.character || item.name;
+    const actionScene = $('#action-scene');
+    actionScene.dataset.character = item.characterKey || 'guide';
+    actionScene.dataset.action = item.actionKey || 'rescue';
+    actionScene.setAttribute('aria-label', character + '. ' + (item.action || item.question) + ' ' + (item.scene || ''));
+    $('#action-character').textContent = mode === 'story' ? 'TÚ ERES · ' + character : character;
+    $('#action-description').textContent = item.action || 'Ayuda al explorador a recordar este momento.';
+    $('#action-place').textContent = item.scene || 'Perú';
+    $('#action-prop').textContent = item.actionProp || mini.icons[0];
+    const landmarks = $('#action-landmarks');
+    landmarks.replaceChildren();
+    (item.landmarks || []).forEach((symbol, index) => {
+      const landmark = document.createElement('span');
+      landmark.className = 'action-scene__landmark action-scene__landmark--' + (index + 1);
+      landmark.textContent = symbol;
+      landmarks.appendChild(landmark);
+    });
+    $('#player').dataset.character = item.characterKey || 'guide';
+    $('#player').dataset.action = item.actionKey || 'rescue';
     $('#q-icon').textContent = item.icon;
     $('#q-era').textContent = item.year;
-    $('#q-name').textContent = item.name;
+    $('#q-name').textContent = character;
     $('#q-text').textContent = item.question;
+    $('#q-clue').textContent = item.hint || 'Piensa en el lugar y la acción que acabas de ver.';
+    $('#q-clue').hidden = true;
+    $('#btn-hint').textContent = 'PISTA 💡';
+    $('#btn-hint').disabled = true;
+    $('#btn-hint').setAttribute('aria-expanded', 'false');
 
     const wrap = $('#q-options');
     wrap.innerHTML = '';
@@ -644,6 +701,7 @@
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'option';
+      b.disabled = true;
       const icon = document.createElement('span');
       icon.className = 'option__game-icon';
       icon.setAttribute('aria-hidden', 'true');
@@ -667,12 +725,16 @@
     $('#q-hint').textContent = mini.hint + ' · teclas 1, 2 o 3';
 
     openModal('#modal-q', false);
-    setTimeout(() => {
-      const first = G.optionEls[0];
-      if (first && !G.answered) first.focus({ preventScroll: true });
-    }, 60);
-
-    startTimer(isRescue ? RESCUE_TIME : QUESTION_TIME, onTimeout);
+    G.sceneTimer = setTimeout(() => {
+      if (G.q !== item || !isModalOpen()) return;
+      card.classList.remove('is-intro');
+      card.classList.add('is-ready');
+      G.optionEls.forEach((option) => { option.disabled = false; });
+      $('#btn-hint').disabled = false;
+      card.scrollTop = 0;
+      card.focus({ preventScroll: true });
+      startTimer(isRescue ? RESCUE_TIME : QUESTION_TIME, onTimeout);
+    }, 1300);
   }
 
   function startTimer(seconds, onEnd) {
@@ -712,13 +774,15 @@
   }
 
   function stopTimer() {
+    if (G.sceneTimer) clearTimeout(G.sceneTimer);
+    G.sceneTimer = 0;
     G.timerToken++;
     if (G.timerRaf) cancelAnimationFrame(G.timerRaf);
     G.timerRaf = 0;
   }
 
   function chooseOption(i) {
-    if (!G.q || G.answered) return;
+    if (!G.q || G.answered || $('#qcard').classList.contains('is-intro')) return;
     const ok = i === G.answer;
     finishAnswer(ok, i, false);
   }
@@ -731,6 +795,7 @@
   function finishAnswer(ok, chosen, timedOut) {
     G.answered = true;
     stopTimer();
+    $('#qcard').classList.add('is-answered');
 
     const q = G.q;
     const correctIndex = G.answer;
@@ -777,7 +842,12 @@
 
     const btn = $('#btn-next');
     btn.hidden = false;
-    btn.textContent = G.mode === 'rescue' ? 'SIGUIENTE ▶' : 'CONTINUAR ▶';
+    btn.textContent = G.mode === 'rescue'
+      ? 'SIGUIENTE ▶'
+      : G.mode === 'story'
+        ? 'VOLVER A LA MONTAÑA ▶'
+        : 'CONTINUAR ▶';
+    if (G.mode === 'story') $('#q-hint').textContent = 'Pulsa ESPACIO para volver a la montaña.';
     setTimeout(() => btn.focus({ preventScroll: true }), 40);
 
     updateHUD();
@@ -826,6 +896,8 @@
 
     // historia
     closeModal('#modal-q');
+    $('#player').dataset.character = 'guide';
+    delete $('#player').dataset.action;
     if (G.lives <= 0) {
       if (!G.rescueUsed) {
         $('#screen-rescue').classList.add('is-active');
@@ -845,11 +917,11 @@
       finishStory();
       return;
     }
-    G.awaitingQuestion = true;
+    G.awaitingQuestion = false;
     W.targetX = null;
     W.goShown = false;
     $('#btn-go').hidden = true;
-    toast('Escala hasta ' + M[G.idx].q.scene + ' y pulsa E.');
+    toast('De vuelta en la montaña: usa las flechas y pulsa ESPACIO en el siguiente recuerdo.');
   }
 
   /* ============================== RESCATE ============================== */
@@ -900,7 +972,7 @@
     G.paused = false;
     G.queue = D.QUESTIONS.map(prepare);
     G.startTime = Date.now();
-    G.awaitingQuestion = true;
+    G.awaitingQuestion = false;
     G.q = null;
 
     $('#markers').hidden = false;
@@ -914,7 +986,7 @@
     updateHUD();
     startLoop();
 
-    toast('¡Sube por las terrazas! Acércate al guía y pulsa E para hablar.');
+    toast('¡Sube por las terrazas! Usa las flechas y pulsa ESPACIO para entrar al recuerdo.');
   }
 
   function finishStory() {
@@ -1217,10 +1289,14 @@
     });
 
     $('#btn-go').addEventListener('click', () => {
-      if (G.mode === 'story' && M[G.idx]) { Sfx.click(); walkToMarker(G.idx); }
+      if (G.mode !== 'story' || !M[G.idx]) return;
+      Sfx.click();
+      if (Math.abs(W.x - M[G.idx].x) < 70) openCurrentQuestion();
+      else walkToMarker(G.idx);
     });
 
     $('#btn-next').addEventListener('click', () => { Sfx.click(); nextStep(); });
+    $('#btn-hint').addEventListener('click', toggleQuestionHint);
     $('#btn-fact-close').addEventListener('click', () => { Sfx.click(); closeModal('#modal-fact'); });
     $('#modal-fact .modal__backdrop').addEventListener('click', () => closeModal('#modal-fact'));
     $('#modal-how .modal__backdrop').addEventListener('click', () => closeModal('#modal-how'));
@@ -1259,6 +1335,15 @@
     saveNow();
     renderSoundIcons();
     if (save.sound) { Sfx.init(); Sfx.click(); }
+  }
+
+  function toggleQuestionHint() {
+    const clue = $('#q-clue');
+    const show = clue.hidden;
+    clue.hidden = !show;
+    $('#btn-hint').textContent = show ? 'OCULTAR PISTA' : 'PISTA 💡';
+    $('#btn-hint').setAttribute('aria-expanded', String(show));
+    if (show) Sfx.click();
   }
 
   function quitToMenu() {
@@ -1310,7 +1395,7 @@
       W.keys.right = true;
       W.targetX = null;
       e.preventDefault();
-    } else if (key === 'e' || key === 'E' || key === ' ') {
+    } else if (key === 'e' || key === 'E' || key === ' ' || e.code === 'Space') {
       if (G.mode === 'story' && M[G.idx]) {
         e.preventDefault();
         if (Math.abs(W.x - M[G.idx].x) < 70) {
@@ -1319,11 +1404,7 @@
           G.awaitingQuestion = false;
           openCurrentQuestion();
         } else {
-          G.awaitingQuestion = true;
-          W.targetX = null;
-          W.goShown = false;
-          $('#btn-go').hidden = true;
-          toast('Sigue el sendero hasta ' + M[G.idx].q.scene + ' y pulsa E.');
+          toast('Acércate a ' + M[G.idx].q.scene + ' con las flechas y pulsa ESPACIO.');
         }
       }
     }

@@ -2399,3 +2399,556 @@ img, svg { display: block; }
     text-align: left;
   }
 }
+
+/* Historias actuadas y personajes identificables por época. */
+.marker__action {
+  color: #ffe27a;
+  font-size: 6px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+.marker__name {
+  overflow: visible;
+  font-size: 8px;
+  line-height: 1.15;
+  text-overflow: clip;
+  white-space: normal;
+}
+.marker[data-character="tupac"] { --npc-coat: #b83b2d; --npc-trim: #f3c64e; }
+.marker[data-character="tupac"] .marker__lantern::before {
+  background: linear-gradient(180deg, #26180f 0 23%, #f3c64e 23% 36%, #b83b2d 36% 46%, #c98b62 46% 100%);
+}
+.marker[data-character="san-martin"] { --npc-coat: #294f9b; --npc-trim: #f0c84b; }
+.marker[data-character="san-martin"] .marker__lantern::before {
+  background: linear-gradient(180deg, #221b18 0 33%, #d89c70 33% 100%);
+  clip-path: polygon(0 10%, 28% 0, 40% 14%, 60% 14%, 72% 0, 100% 10%, 88% 30%, 88% 100%, 12% 100%, 12% 30%);
+}
+.marker[data-character="la-serna"],
+.marker[data-character="rodil"] { --npc-coat: #9c3d36; --npc-trim: #d7d0bc; }
+.marker[data-character="sanchez-carrion"] { --npc-coat: #383d55; --npc-trim: #e5d5a5; }
+.marker[data-character="bolivar"],
+.marker[data-character="razuri"],
+.marker[data-character="sucre"] { --npc-coat: #315eae; --npc-trim: #f2cf58; }
+.marker[data-character="peruvian-child"] { --npc-coat: #e3483c; --npc-trim: #fff3d4; }
+.marker[data-character="peruvian-child"] .marker__lantern::before {
+  background: linear-gradient(180deg, #4a2d1d 0 29%, #e8b78d 29% 100%);
+}
+
+.action-scene {
+  --action-sky: #80c9df;
+  --action-hill: #6a8f69;
+  --action-ground: #6e9a50;
+  position: relative;
+  isolation: isolate;
+  height: 158px;
+  margin: 0 0 16px;
+  overflow: hidden;
+  border: 3px solid #07140c;
+  background: linear-gradient(180deg, var(--action-sky) 0 62%, #d7e5c4 62% 66%, var(--action-ground) 66% 100%);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.3), 0 5px 0 #07140c;
+}
+.action-scene[data-action="landing"] {
+  --action-sky: #75c4de;
+  background: linear-gradient(180deg, #75c4de 0 55%, #c9dbc6 55% 60%, #278aa5 60% 79%, #c5a873 79% 100%);
+}
+.action-scene[data-action="proclaim"],
+.action-scene[data-action="celebrate"] {
+  --action-sky: #f6d783;
+  --action-ground: #c9824e;
+}
+.action-scene[data-action="retreat"] { --action-sky: #f0ae85; --action-ground: #687b55; }
+.action-scene[data-action="congress"] { --action-sky: #d9c99e; --action-ground: #887354; }
+.action-scene[data-action="arrive"],
+.action-scene[data-action="charge"],
+.action-scene[data-action="victory"] { --action-sky: #7fb9d2; --action-hill: #587d72; }
+.action-scene[data-action="surrender"] { --action-sky: #96b5c3; --action-ground: #667b76; }
+.action-scene__sun {
+  position: absolute;
+  top: 12px;
+  right: 18%;
+  width: 28px;
+  height: 28px;
+  background: #ffe58f;
+  box-shadow: 0 0 0 5px rgba(255, 229, 143, 0.2), 0 0 25px 10px rgba(255, 229, 143, 0.42);
+}
+.action-scene__ridge {
+  position: absolute;
+  z-index: -1;
+  right: -5%;
+  bottom: 28px;
+  left: -5%;
+  height: 62%;
+  background: var(--action-hill);
+  clip-path: polygon(0 70%, 12% 46%, 22% 64%, 35% 20%, 47% 60%, 62% 34%, 76% 65%, 88% 26%, 100% 58%, 100% 100%, 0 100%);
+  opacity: 0.8;
+}
+.action-scene__ground {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 30px;
+  border-top: 5px solid rgba(255, 231, 154, 0.45);
+  background: repeating-linear-gradient(90deg, var(--action-ground) 0 34px, rgba(28, 54, 35, 0.22) 34px 40px);
+}
+.action-scene__place {
+  position: absolute;
+  z-index: 3;
+  top: 10px;
+  left: 10px;
+  padding: 5px 8px;
+  border: 2px solid #13251b;
+  background: rgba(15, 36, 28, 0.82);
+  color: #fff0be;
+  font-family: var(--font-d);
+  font-size: 7px;
+  letter-spacing: 0.04em;
+}
+.action-scene__figure {
+  --actor-coat: #315eae;
+  --actor-trim: #f2cf58;
+  --actor-skin: #c98b62;
+  --actor-hair: #281a12;
+  --actor-hat: #281a12;
+  position: absolute;
+  z-index: 2;
+  bottom: 18px;
+  left: 23%;
+  width: 72px;
+  height: 116px;
+  animation: sceneActorIdle 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 5px 0 rgba(12, 24, 18, 0.5));
+}
+.action-scene__figure::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 4px;
+  left: 20px;
+  width: 34px;
+  height: 36px;
+  background:
+    linear-gradient(180deg, var(--actor-hat) 0 6px, transparent 6px),
+    linear-gradient(180deg, var(--actor-hair) 0 26%, transparent 26%),
+    linear-gradient(90deg, transparent 0 10%, var(--actor-skin) 10% 90%, transparent 90%);
+  clip-path: polygon(12% 0, 88% 0, 100% 28%, 92% 100%, 8% 100%, 0 28%);
+  box-shadow: inset 0 0 0 2px rgba(25, 20, 15, 0.7);
+}
+.action-scene__figure::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 8px;
+  width: 56px;
+  height: 62px;
+  z-index: 2;
+  border-top: 9px solid var(--actor-trim);
+  background:
+    linear-gradient(90deg, transparent 0 47%, var(--actor-trim) 47% 53%, transparent 53%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.15), transparent 28% 70%, rgba(0, 0, 0, 0.15)),
+    var(--actor-coat);
+  clip-path: polygon(23% 0, 77% 0, 100% 100%, 0 100%);
+}
+.action-scene__legs {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 20px;
+  width: 36px;
+  height: 23px;
+  background:
+    linear-gradient(90deg, #33251b 0 35%, transparent 35% 58%, #33251b 58% 94%) 0 7px / 100% 12px no-repeat,
+    linear-gradient(90deg, #17120f 0 35%, transparent 35% 58%, #17120f 58% 94%) 0 17px / 100% 6px no-repeat;
+}
+.action-scene__face {
+  position: absolute;
+  z-index: 3;
+  top: 22px;
+  left: 28px;
+  width: 18px;
+  height: 8px;
+  background: linear-gradient(90deg, #23170f 0 4px, transparent 4px 12px, #23170f 12px 16px, transparent 16px), linear-gradient(#8d3e2e, #8d3e2e) 5px 7px / 8px 2px no-repeat;
+}
+.action-scene__arm {
+  position: absolute;
+  z-index: 3;
+  top: 52px;
+  left: 43px;
+  width: 38px;
+  height: 8px;
+  transform: rotate(-24deg);
+  transform-origin: left center;
+  background: var(--actor-skin);
+  box-shadow: 30px 0 0 -1px var(--actor-skin);
+}
+.action-scene__prop {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 54px;
+  font-size: 30px;
+  line-height: 1;
+  filter: drop-shadow(2px 3px 0 rgba(12, 24, 18, 0.45));
+}
+.action-scene__caption {
+  position: absolute;
+  z-index: 3;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: min(52%, 420px);
+  padding: 9px 12px;
+  border: 2px solid rgba(7, 20, 12, 0.82);
+  background: rgba(13, 30, 25, 0.82);
+  box-shadow: 0 3px 0 rgba(7, 20, 12, 0.72);
+  color: #fff4d4;
+}
+.action-scene__caption b {
+  color: #ffe27a;
+  font-family: var(--font-d);
+  font-size: 8px;
+  line-height: 1.5;
+}
+.action-scene__caption span { font-size: 11px; font-weight: 800; line-height: 1.25; }
+.action-scene[data-character="tupac"] .action-scene__figure { --actor-coat: #b83b2d; --actor-trim: #f3c64e; --actor-hat: #f3c64e; }
+.action-scene[data-character="san-martin"] .action-scene__figure { --actor-coat: #294f9b; --actor-trim: #f0c84b; --actor-hair: #30231c; --actor-hat: #26211e; }
+.action-scene[data-character="la-serna"] .action-scene__figure,
+.action-scene[data-character="rodil"] .action-scene__figure { --actor-coat: #9c3d36; --actor-trim: #d7d0bc; --actor-hat: #e4dfd0; }
+.action-scene[data-character="sanchez-carrion"] .action-scene__figure { --actor-coat: #383d55; --actor-trim: #e5d5a5; --actor-hat: #31241b; }
+.action-scene[data-character="bolivar"] .action-scene__figure,
+.action-scene[data-character="razuri"] .action-scene__figure,
+.action-scene[data-character="sucre"] .action-scene__figure { --actor-coat: #315eae; --actor-trim: #f2cf58; --actor-hat: #323b4d; }
+.action-scene[data-character="peruvian-child"] .action-scene__figure { --actor-coat: #e3483c; --actor-trim: #fff3d4; --actor-hat: #4a2d1d; }
+.action-scene[data-action="rally"] .action-scene__arm,
+.action-scene[data-action="proclaim"] .action-scene__arm,
+.action-scene[data-action="victory"] .action-scene__arm,
+.action-scene[data-action="celebrate"] .action-scene__arm { animation: sceneRaiseArm 0.9s ease-in-out infinite alternate; }
+.action-scene[data-action="landing"] .action-scene__figure,
+.action-scene[data-action="arrive"] .action-scene__figure,
+.action-scene[data-action="charge"] .action-scene__figure { animation: sceneMarch 0.7s steps(2) infinite; }
+.action-scene[data-action="retreat"] .action-scene__figure { animation: sceneRetreat 1.3s ease-in-out infinite; }
+.action-scene[data-action="congress"] .action-scene__prop { animation: scenePaper 1.2s ease-in-out infinite; }
+.action-scene[data-action="surrender"] .action-scene__prop { animation: sceneSurrender 1.2s ease-in-out infinite; }
+
+.qcard.is-intro .qcard__text,
+.qcard.is-intro .options,
+.qcard.is-intro .qcard__foot {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+.qcard.is-intro .timer { visibility: hidden; }
+.qcard.is-ready .qcard__text { animation: sceneTextIn 0.28s ease-out both; }
+.qcard.is-ready .options { animation: sceneChoicesIn 0.34s ease-out both; }
+.qcard__guidance {
+  display: flex;
+  flex: 1 1 280px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.qcard__hint { flex: 1 1 100%; }
+.qcard__hint-button {
+  padding: 7px 10px;
+  border: 2px solid #13251b;
+  background: #ffe27a;
+  box-shadow: 0 3px 0 #13251b;
+  color: #241803;
+  font-family: var(--font-d);
+  font-size: 7px;
+  cursor: pointer;
+}
+.qcard__clue {
+  flex: 1 1 100%;
+  padding: 8px 10px;
+  border-left: 4px solid #ffe27a;
+  background: rgba(255, 226, 122, 0.12);
+  color: #fff0be;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  animation: sceneTextIn 0.2s ease-out both;
+}
+.qcard__clue[hidden] { display: none; }
+
+@keyframes sceneActorIdle {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+@keyframes sceneRaiseArm {
+  from { transform: rotate(12deg); }
+  to { transform: rotate(-56deg); }
+}
+@keyframes sceneMarch {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 7px -3px; }
+}
+@keyframes sceneRetreat {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 14px 0; }
+}
+@keyframes scenePaper {
+  0%, 100% { transform: rotate(-8deg) translateY(0); }
+  50% { transform: rotate(8deg) translateY(-5px); }
+}
+@keyframes sceneSurrender {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+@keyframes sceneTextIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes sceneChoicesIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 720px) {
+  .action-scene { height: 138px; }
+  .action-scene__figure { left: 10%; transform: scale(0.9); transform-origin: bottom left; }
+  .action-scene__caption { right: 8px; width: 58%; padding: 7px 8px; }
+  .action-scene__caption span { font-size: 10px; }
+  .qcard__guidance { flex-basis: 100%; }
+}
+.qcard__hint-button:disabled { cursor: default; opacity: 0.55; }
+
+@media (max-height: 620px) {
+  .qcard { max-height: calc(100vh - 16px); padding: 10px 14px; }
+  .qcard__head { gap: 8px; margin: 2px 0 8px; }
+  .qcard__icon { width: 44px; height: 44px; font-size: 22px; }
+  .timer { min-width: 140px; gap: 6px; }
+  .timer__track { height: 16px; }
+  .timer__num { min-width: 34px; font-size: 14px; }
+  .action-scene { height: 120px; margin-bottom: 8px; }
+  .qcard.is-ready .action-scene { height: 72px; transition: height 0.24s ease; }
+  .qcard.is-ready .action-scene__figure { bottom: 2px; transform: scale(0.56); transform-origin: bottom left; }
+  .qcard.is-ready .action-scene__place { top: 4px; left: 6px; padding: 3px 5px; font-size: 6px; }
+  .qcard.is-ready .action-scene__caption { right: 6px; bottom: 4px; gap: 2px; padding: 4px 8px; }
+  .qcard.is-ready .action-scene__caption b { font-size: 7px; }
+  .qcard.is-ready .action-scene__caption span { font-size: 9px; }
+  .qcard__text { margin-bottom: 8px; font-size: 15px; line-height: 1.28; }
+  .qcard[data-minigame="quipu"] .options { gap: 6px; }
+  .qcard[data-minigame="quipu"] .option { min-height: 44px; gap: 8px; padding: 6px 9px; font-size: 13px; }
+  .qcard[data-minigame="quipu"] .option__game-icon { width: 30px; height: 30px; font-size: 16px; }
+  .qcard[data-minigame="quipu"] .option__key { width: 28px; height: 28px; }
+  .qcard[data-minigame="stairs"] .option,
+  .qcard[data-minigame="temple"] .option { min-height: 70px; padding: 7px; }
+  .qcard[data-minigame="stairs"] .option__game-icon,
+  .qcard[data-minigame="temple"] .option__game-icon { width: 38px; height: 34px; font-size: 19px; }
+  .qcard__foot { gap: 8px; margin-top: 8px; }
+  .qcard__guidance { gap: 5px; }
+  .qcard__hint { font-size: 9px; }
+  .qcard__hint-button { padding: 5px 8px; }
+  .feedback { margin-top: 8px; padding: 8px 10px; }
+  .feedback__fact { font-size: 12px; }
+}
+
+/* La escena histórica ocupa el juego completo; la montaña queda debajo. */
+#modal-q.modal--event {
+  padding: 0;
+  place-items: stretch;
+}
+#modal-q.modal--event .modal__backdrop {
+  background: rgba(3, 12, 8, 0.96);
+  backdrop-filter: none;
+}
+#modal-q.modal--event .qcard {
+  display: grid;
+  grid-template-rows: auto auto minmax(170px, 32vh) auto minmax(130px, 1fr) auto auto;
+  align-content: stretch;
+  gap: clamp(7px, 1.2vh, 14px);
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: none;
+  overflow-y: auto;
+  padding: clamp(10px, 2vh, 22px) clamp(12px, 3vw, 42px) calc(12px + env(safe-area-inset-bottom));
+  border: 0;
+  box-shadow: inset 0 0 0 6px #35783c, inset 0 0 0 10px var(--ink-2);
+  background:
+    radial-gradient(ellipse at 50% 23%, rgba(116, 196, 214, 0.16), transparent 50%),
+    linear-gradient(180deg, #102d35 0%, #163b34 46%, #172b21 100%);
+  animation: cardIn 0.3s ease-out;
+}
+#modal-q.modal--event .qcard__ribbon {
+  position: relative;
+  top: auto;
+  left: auto;
+  justify-self: center;
+  transform: none;
+  margin: 0 auto;
+}
+#modal-q.modal--event .qcard__head {
+  margin: 0;
+  padding: 0 clamp(2px, 1vw, 14px);
+}
+#modal-q.modal--event .action-scene {
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  max-height: none;
+  margin: 0;
+  border: 3px solid #07140c;
+  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.2), 0 6px 0 #07140c;
+}
+#modal-q.modal--event .action-scene__figure {
+  left: 23%;
+  bottom: 12%;
+  scale: 1.55;
+  transform-origin: bottom left;
+}
+#modal-q.modal--event .action-scene__place {
+  top: 14px;
+  left: 16px;
+  padding: 8px 12px;
+  font-size: clamp(8px, 1vw, 12px);
+}
+#modal-q.modal--event .action-scene__caption {
+  right: clamp(10px, 2vw, 24px);
+  bottom: clamp(10px, 2vh, 20px);
+  width: min(48%, 620px);
+  padding: clamp(10px, 1.5vw, 18px);
+}
+#modal-q.modal--event .action-scene__caption b { font-size: clamp(9px, 1.2vw, 14px); }
+#modal-q.modal--event .action-scene__caption span { font-size: clamp(13px, 1.6vw, 20px); }
+#modal-q.modal--event .action-scene__landmarks {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+.action-scene__landmark {
+  position: absolute;
+  bottom: 18%;
+  font-size: clamp(30px, 5vw, 68px);
+  line-height: 1;
+  filter: drop-shadow(3px 5px 0 rgba(18, 30, 20, 0.48));
+  animation: sceneActorIdle 2.2s ease-in-out infinite;
+}
+.action-scene__landmark--1 { left: 58%; bottom: 20%; animation-delay: -0.5s; }
+.action-scene__landmark--2 { left: 74%; bottom: 15%; animation-delay: -1.2s; }
+.action-scene__landmark--3 { left: 89%; bottom: 22%; animation-delay: -0.8s; }
+#modal-q.modal--event .qcard__text {
+  margin: 0;
+  font-size: clamp(19px, 2.5vw, 32px);
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+}
+#modal-q.modal--event .options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: clamp(8px, 1.5vw, 18px);
+  min-height: 0;
+}
+#modal-q.modal--event .option {
+  flex-direction: column;
+  justify-content: center;
+  min-height: 110px;
+  height: 100%;
+  padding: clamp(10px, 1.5vw, 20px);
+  font-size: clamp(15px, 1.8vw, 23px);
+  text-align: center;
+}
+#modal-q.modal--event .option__game-icon {
+  width: clamp(40px, 5vw, 64px);
+  height: clamp(40px, 5vw, 64px);
+  font-size: clamp(22px, 3vw, 34px);
+}
+#modal-q.modal--event .option__key {
+  width: clamp(32px, 4vw, 48px);
+  height: clamp(32px, 4vw, 48px);
+  font-size: clamp(11px, 1.5vw, 17px);
+}
+#modal-q.modal--event .feedback {
+  margin: 0;
+  padding: clamp(9px, 1.5vw, 16px);
+}
+#modal-q.modal--event .feedback__title { font-size: clamp(9px, 1vw, 12px); }
+#modal-q.modal--event .feedback__fact { font-size: clamp(13px, 1.4vw, 18px); }
+#modal-q.modal--event .qcard__foot {
+  gap: 12px;
+  margin: 0;
+}
+#modal-q.modal--event .qcard__guidance { gap: 10px; }
+#modal-q.modal--event .qcard__hint { font-size: clamp(11px, 1.2vw, 14px); }
+#modal-q.modal--event .qcard.is-answered {
+  grid-template-rows: auto auto minmax(88px, 16vh) auto minmax(110px, 1fr) minmax(54px, auto) auto;
+}
+#modal-q.modal--event .qcard.is-answered .action-scene { min-height: 88px; }
+#modal-q.modal--event .qcard.is-answered .action-scene__figure { scale: 0.9; }
+#modal-q.modal--event .qcard.is-answered .option { min-height: 48px; }
+
+@media (max-width: 720px) {
+  #modal-q.modal--event .qcard {
+    grid-template-rows: auto auto minmax(140px, 25vh) auto minmax(190px, 1fr) auto auto;
+    gap: 7px;
+    padding: 9px 10px calc(10px + env(safe-area-inset-bottom));
+    box-shadow: inset 0 0 0 4px #35783c, inset 0 0 0 7px var(--ink-2);
+  }
+  #modal-q.modal--event .qcard__head { flex-wrap: nowrap; gap: 8px; }
+  #modal-q.modal--event .qcard__icon { width: 42px; height: 42px; font-size: 21px; }
+  #modal-q.modal--event .qcard__year { font-size: 10px; }
+  #modal-q.modal--event .qcard__name { font-size: 10px; }
+  #modal-q.modal--event .timer { min-width: 105px; }
+  #modal-q.modal--event .timer__track { height: 16px; }
+  #modal-q.modal--event .timer__num { min-width: 30px; font-size: 12px; }
+  #modal-q.modal--event .action-scene__figure { left: 12%; scale: 1.1; }
+  #modal-q.modal--event .action-scene__caption { width: 57%; padding: 7px 9px; }
+  #modal-q.modal--event .action-scene__caption b { font-size: 8px; }
+  #modal-q.modal--event .action-scene__caption span { font-size: 11px; }
+  #modal-q.modal--event .action-scene__place { top: 8px; left: 8px; padding: 5px 7px; }
+  #modal-q.modal--event .action-scene__landmark { font-size: clamp(26px, 9vw, 42px); }
+  #modal-q.modal--event .action-scene__landmark--1 { left: 57%; }
+  #modal-q.modal--event .action-scene__landmark--2 { left: 74%; }
+  #modal-q.modal--event .action-scene__landmark--3 { left: 88%; }
+  #modal-q.modal--event .qcard__text { font-size: clamp(17px, 5vw, 23px); }
+  #modal-q.modal--event .options {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(3, minmax(54px, 1fr));
+    gap: 7px;
+  }
+  #modal-q.modal--event .option {
+    flex-direction: row;
+    justify-content: flex-start;
+    min-height: 54px;
+    padding: 7px 10px;
+    font-size: clamp(14px, 4vw, 17px);
+    text-align: left;
+  }
+  #modal-q.modal--event .option__game-icon { width: 34px; height: 34px; font-size: 19px; }
+  #modal-q.modal--event .option__key { width: 30px; height: 30px; }
+  #modal-q.modal--event .qcard__foot { gap: 6px; }
+  #modal-q.modal--event .qcard__guidance { flex-basis: auto; gap: 6px; }
+  #modal-q.modal--event .qcard__hint { font-size: 9px; }
+  #modal-q.modal--event .qcard__foot { flex-direction: column; align-items: stretch; }
+  #modal-q.modal--event #btn-next { width: 100%; }
+  #modal-q.modal--event .qcard.is-answered {
+    grid-template-rows: auto auto minmax(72px, 11vh) auto minmax(156px, 0.8fr) minmax(54px, auto) auto;
+  }
+  #modal-q.modal--event .qcard.is-answered .action-scene { min-height: 72px; }
+  #modal-q.modal--event .qcard.is-answered .action-scene__figure { scale: 0.7; }
+  #modal-q.modal--event .qcard.is-answered .options { grid-template-rows: repeat(3, minmax(44px, 1fr)); }
+}
+
+@media (max-height: 620px) {
+  #modal-q.modal--event .qcard {
+    grid-template-rows: auto auto minmax(112px, 24vh) auto minmax(112px, 1fr) auto auto;
+    gap: 5px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  #modal-q.modal--event .action-scene { min-height: 112px; }
+  #modal-q.modal--event .action-scene__figure { scale: 1.05; }
+  #modal-q.modal--event .qcard__text { font-size: clamp(16px, 2.2vw, 23px); }
+  #modal-q.modal--event .option { min-height: 52px; }
+  #modal-q.modal--event .qcard.is-answered { grid-template-rows: auto auto minmax(70px, 14vh) auto minmax(150px, 0.8fr) minmax(50px, auto) auto; }
+  #modal-q.modal--event .qcard.is-answered .action-scene { min-height: 70px; }
+}

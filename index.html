@@ -191,7 +191,7 @@
 
     <div class="hintbar">
       <span class="hintbar__keys"><span class="kbd">←</span><span class="kbd">→</span> moverte</span>
-      <span class="hintbar__keys"><span class="kbd">E</span> hablar con el recuerdo</span>
+      <span class="hintbar__keys"><span class="kbd">ESPACIO</span> entrar / volver del evento</span>
     </div>
 
     <div class="pad">
@@ -300,7 +300,7 @@
   <!-- ======================== MODAL PREGUNTA ======================== -->
   <div class="modal" id="modal-q" hidden>
     <div class="modal__backdrop"></div>
-    <div class="qcard panel" id="qcard" role="dialog" aria-modal="true" aria-labelledby="q-text">
+    <div class="qcard panel" id="qcard" role="dialog" aria-modal="true" aria-labelledby="q-text" tabindex="-1">
       <div class="qcard__ribbon" id="qcard-mode">RECUERDO 1 DE 10</div>
 
       <div class="qcard__head">
@@ -317,6 +317,24 @@
         </div>
       </div>
 
+      <div class="action-scene" id="action-scene" data-character="guide" data-action="rescue" role="img" aria-label="Escena histórica">
+        <span class="action-scene__sun" aria-hidden="true"></span>
+        <span class="action-scene__ridge" aria-hidden="true"></span>
+        <span class="action-scene__landmarks" id="action-landmarks" aria-hidden="true"></span>
+        <span class="action-scene__ground" aria-hidden="true"></span>
+        <span class="action-scene__place" id="action-place">Perú</span>
+        <div class="action-scene__figure" aria-hidden="true">
+          <span class="action-scene__face"></span>
+          <span class="action-scene__legs"></span>
+          <span class="action-scene__arm"></span>
+          <span class="action-scene__prop" id="action-prop">⚔️</span>
+        </div>
+        <div class="action-scene__caption">
+          <b id="action-character">Guía de rescate</b>
+          <span id="action-description">Te muestra una pista para recuperar una vida.</span>
+        </div>
+      </div>
+
       <h3 class="qcard__text" id="q-text">...</h3>
       <div class="options" id="q-options"></div>
 
@@ -326,7 +344,11 @@
       </div>
 
       <div class="qcard__foot">
-        <span class="qcard__hint" id="q-hint">Teclas 1 · 2 · 3 o toca una opción</span>
+        <div class="qcard__guidance">
+          <span class="qcard__hint" id="q-hint">Teclas 1 · 2 · 3 o toca una opción</span>
+          <span class="qcard__clue" id="q-clue" role="status" hidden></span>
+          <button class="qcard__hint-button" id="btn-hint" type="button" aria-expanded="false">PISTA 💡</button>
+        </div>
         <button class="btn btn--gold" id="btn-next" hidden>CONTINUAR ▶</button>
       </div>
     </div>
@@ -360,8 +382,9 @@
     <div class="panel howcard" role="dialog" aria-modal="true">
       <h3>¿CÓMO SE JUEGA?</h3>
       <ol class="howlist">
-        <li><b>Camina</b> con las flechas ← → o con los botones. Toca un recuerdo para acercarte.</li>
-        <li><b>Despierta el recuerdo</b> y responde en <b>10 segundos</b>.</li>
+        <li><b>Camina</b> con las flechas ← →. Toca un recuerdo o usa «Ir al recuerdo» para acercarte.</li>
+        <li>Al llegar, pulsa <b>ESPACIO</b>: te convertirás en el personaje y entrarás en su escena.</li>
+        <li>Responde en <b>10 segundos</b>. Pulsa <b>ESPACIO</b> para volver a la montaña y seguir.</li>
         <li>Cada acierto te da una <b>fruta</b>. Tienes <b>3 vidas</b>.</li>
         <li>Si fallas 3 veces, una <b>ronda de rescate</b> de 5 segundos puede salvarte.</li>
         <li>Completa los <b>10 recuerdos</b> para ganar tu insignia y desbloquear el siguiente bloque.</li>
