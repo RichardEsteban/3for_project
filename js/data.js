@@ -1,5 +1,5 @@
 /* =====================================================================
-   MEMORIA LIBRE — Contenido histórico
+   CRONIVERSO — Contenido histórico
    Bloque 1: La Independencia del Perú (1780 – 1826)
    ===================================================================== */
 window.GAME_DATA = (function () {

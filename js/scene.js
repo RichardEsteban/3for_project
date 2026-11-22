@@ -1,5 +1,5 @@
 /* =====================================================================
-   MEMORIA LIBRE — Escenario de selva pixel art generado por código
+   CRONIVERSO — Escenario de selva pixel art generado por código
    Capas con parallax: fondo lejano, árboles, suelo, enredaderas.
    ===================================================================== */
 window.SCENE = (function () {

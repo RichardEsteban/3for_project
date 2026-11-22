@@ -1,5 +1,5 @@
 /* =====================================================================
-   MEMORIA LIBRE — Sprites pixel art (SVG generado píxel a píxel)
+   CRONIVERSO — Sprites pixel art (SVG generado píxel a píxel)
    ===================================================================== */
 window.PIXEL = (function () {
   'use strict';

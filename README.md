@@ -1,9 +1,9 @@
-# 🌿 Memoria Libre
+# 🌿 Croniverso
 
 **Videojuego educativo en pixel art para aprender y recordar la Independencia del Perú (1780 – 1826).**
 Pensado para exploradores de **9 a 13 años**. Corre en cualquier navegador, sin instalar nada.
 
-![Menú principal de Memoria Libre](docs/img/01-menu.jpg)
+![Menú principal de Croniverso](docs/img/01-menu.jpg)
 
 ---
 
