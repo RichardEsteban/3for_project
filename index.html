@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#08251c" />
+  <meta name="color-scheme" content="dark" />
+  <title>Memoria Libre · La Independencia del Perú</title>
+  <meta name="description" content="Videojuego pixel art para aprender y recordar la Independencia del Perú. Para exploradores de 9 a 13 años." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<main id="app">
+
+  <!-- ============================= MENÚ ============================= -->
+  <section class="screen screen--menu is-active" id="screen-menu">
+    <div class="bg-jungle bg-jungle--menu" aria-hidden="true">
+      <div class="bg-jungle__sky"></div>
+      <div class="bg-jungle__sun"></div>
+      <div class="bg-jungle__rays"></div>
+      <div class="bg-jungle__layer bg-jungle__layer--ridge" data-par="0.03" id="menu-ridge"></div>
+      <div class="bg-jungle__layer" data-par="0.06" id="menu-far"></div>
+      <div class="bg-jungle__layer" data-par="0.14" id="menu-mid"></div>
+      <div class="bg-jungle__mist"></div>
+      <div class="bg-jungle__layer bg-jungle__layer--fore" data-par="0.26" id="menu-fore"></div>
+      <div class="bg-jungle__canopy"></div>
+      <div class="bg-jungle__scan"></div>
+    </div>
+    <div class="motes" id="menu-motes" aria-hidden="true"></div>
+    <div class="leaves" id="menu-leaves" aria-hidden="true"></div>
+
+    <div class="menu">
+      <div class="menu__main">
+        <div class="brand">
+          <span class="brand__chip"><i class="brand__dot"></i> AVENTURA DE MEMORIA</span>
+          <h1 class="brand__title">
+            <span class="brand__line1">MEMORIA</span>
+            <span class="brand__line2">LIBRE</span>
+          </h1>
+          <div class="brand__rule" aria-hidden="true"><i></i><b></b><i></i></div>
+          <p class="brand__sub">La Independencia del Perú · 1780 – 1826</p>
+        </div>
+
+        <div class="menu__actions">
+          <button class="btn btn--gold btn--xl" id="btn-history">
+            <span class="btn__play">▶</span> HISTORIA
+          </button>
+          <p class="menu__actionnote"><b>10 recuerdos</b> · <b>3 vidas</b> · <b>10 s</b> por pregunta</p>
+          <div class="menu__minor">
+            <button class="btn btn--green btn--sm" id="btn-review-menu">
+              <span class="btn__ico">🍃</span> REPASO
+            </button>
+            <button class="btn btn--ghost btn--sm" id="btn-how">¿CÓMO SE JUEGA?</button>
+          </div>
+        </div>
+
+        <div class="menu__stats panel">
+          <div class="stat">
+            <span class="stat__ico" id="stat-ico-fruit"></span>
+            <span class="stat__body">
+              <span class="stat__label">FRUTAS</span>
+              <span class="stat__value" id="menu-fruits">0</span>
+            </span>
+          </div>
+          <div class="stat">
+            <span class="stat__ico stat__ico--badge" id="stat-ico-badge"></span>
+            <span class="stat__body">
+              <span class="stat__label">INSIGNIAS</span>
+              <span class="stat__value" id="menu-badges">0</span>
+            </span>
+          </div>
+          <div class="stat">
+            <span class="stat__ico stat__ico--leaf">🍃</span>
+            <span class="stat__body">
+              <span class="stat__label">RECUERDOS</span>
+              <span class="stat__value" id="menu-mastered">0/10</span>
+            </span>
+          </div>
+          <p class="menu__review" id="menu-review">Tu primer viaje te espera.</p>
+        </div>
+      </div>
+
+      <div class="menu__art" aria-hidden="true">
+        <div class="artglow"></div>
+        <div class="bubble">¡Hola, explorador!<br />¿Me ayudas a recordar?</div>
+        <div class="herostage">
+          <span class="herostage__aura"></span>
+          <span class="herostage__spark herostage__spark--1"></span>
+          <span class="herostage__spark herostage__spark--2"></span>
+          <span class="herostage__spark herostage__spark--3"></span>
+          <div class="menuchar" id="menu-hero"></div>
+          <div class="herostage__platform"><i></i></div>
+          <span class="floatfruit floatfruit--1" id="menu-fruit-1"></span>
+          <span class="floatfruit floatfruit--2" id="menu-fruit-2"></span>
+        </div>
+        <div class="menuchar__ground"></div>
+      </div>
+    </div>
+
+    <footer class="menu__foot">
+      <span>Hecho para pequeños historiadores · 9 a 13 años</span>
+      <button class="icon-btn" id="btn-sound-menu" title="Sonido" aria-label="Activar o desactivar sonido">🔊</button>
+    </footer>
+  </section>
+
+  <!-- ============================ BLOQUES =========================== -->
+  <section class="screen screen--blocks" id="screen-blocks">
+    <div class="bg-jungle bg-jungle--dim" aria-hidden="true">
+      <div class="bg-jungle__sky"></div>
+      <div class="bg-jungle__sun"></div>
+      <div class="bg-jungle__rays"></div>
+      <div class="bg-jungle__layer bg-jungle__layer--ridge" data-par="0.03" id="blocks-ridge"></div>
+      <div class="bg-jungle__layer" data-par="0.05" id="blocks-far"></div>
+      <div class="bg-jungle__layer" data-par="0.12" id="blocks-mid"></div>
+      <div class="bg-jungle__mist"></div>
+      <div class="bg-jungle__layer bg-jungle__layer--fore" data-par="0.22" id="blocks-fore"></div>
+      <div class="bg-jungle__canopy"></div>
+      <div class="bg-jungle__scan"></div>
+    </div>
+
+    <div class="blocks-wrap">
+      <div class="blocks-head">
+        <button class="btn btn--ghost btn--sm" id="btn-blocks-back">◀ MENÚ</button>
+        <div class="blocks-head__text">
+          <span class="blocks-head__eyebrow">MAPA DE LA MEMORIA</span>
+          <h2 class="screen-title">ELIGE TU BLOQUE DE HISTORIA</h2>
+          <p class="screen-sub">Completa un bloque para desbloquear el siguiente.</p>
+        </div>
+        <div class="blocks-head__fruits"><span id="blocks-fruit-icon"></span><b id="blocks-fruits">0</b></div>
+      </div>
+
+      <div class="blocks" id="blocks-grid"></div>
+
+      <div class="blocks-foot">
+        <p><span class="kbd">TIP</span> Cada bloque es un viaje por la selva del recuerdo. Responde antes de que se acabe el tiempo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= JUEGO ============================ -->
+  <section class="screen screen--game" id="screen-game">
+    <div class="world" id="world">
+      <div class="world__sky" aria-hidden="true"></div>
+      <div class="world__sun" aria-hidden="true"></div>
+      <div class="world__rays" aria-hidden="true"></div>
+      <div class="wlayer wlayer--far" id="layer-far" aria-hidden="true"></div>
+      <div class="wlayer wlayer--mid" id="layer-mid" aria-hidden="true"></div>
+      <div class="world__mist" aria-hidden="true"></div>
+
+      <div class="wstage" id="stage">
+        <div class="wlayer wlayer--ground" id="layer-ground" aria-hidden="true"></div>
+        <div class="wlayer wlayer--props" id="layer-props" aria-hidden="true"></div>
+        <div class="markers" id="markers"></div>
+        <div class="player" id="player" data-facing="right" data-walking="0">
+          <div class="player__shadow"></div>
+          <div class="player__sprite"></div>
+          <div class="player__bubble" id="player-bubble" hidden></div>
+        </div>
+      </div>
+
+      <div class="wlayer wlayer--vines" id="layer-vines" aria-hidden="true"></div>
+      <div class="world__fore" id="world-fore" aria-hidden="true"></div>
+      <div class="leaves leaves--game" id="game-leaves" aria-hidden="true"></div>
+      <div class="motes" id="game-motes" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+    </div>
+
+    <div class="hud">
+      <div class="hud__row">
+        <div class="hud__group">
+          <div class="hud__hearts" id="hearts" aria-label="Vidas"></div>
+          <div class="hud__chip hud__chip--progress">
+            <span class="hud__label">RECUERDO</span>
+            <b id="hud-progress">1/10</b>
+          </div>
+        </div>
+        <div class="hud__group">
+          <div class="hud__chip hud__chip--fruit" title="Frutas ganadas">
+            <span class="hud__fruit-icon" id="hud-fruit-icon"></span>
+            <b id="hud-fruits">0</b>
+          </div>
+          <button class="icon-btn" id="btn-sound" title="Sonido">🔊</button>
+          <button class="icon-btn" id="btn-pause" title="Pausa">❚❚</button>
+        </div>
+      </div>
+      <div class="hud__segs" id="hud-segs"></div>
+    </div>
+
+    <div class="hintbar">
+      <span class="hintbar__keys"><span class="kbd">←</span><span class="kbd">→</span> moverte</span>
+      <span class="hintbar__keys"><span class="kbd">E</span> hablar con el recuerdo</span>
+    </div>
+
+    <div class="pad">
+      <button class="pad__btn" id="move-left" aria-label="Caminar a la izquierda">◀</button>
+      <button class="pad__btn" id="move-right" aria-label="Caminar a la derecha">▶</button>
+    </div>
+
+    <button class="go-btn" id="btn-go" hidden>IR AL RECUERDO ▶</button>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </section>
+
+  <!-- =========================== RESUMEN ============================ -->
+  <section class="screen screen--summary" id="screen-summary">
+    <div class="bg-jungle bg-jungle--dim" aria-hidden="true">
+      <div class="bg-jungle__sky"></div>
+      <div class="bg-jungle__sun"></div>
+      <div class="bg-jungle__rays"></div>
+      <div class="bg-jungle__layer bg-jungle__layer--ridge" data-par="0.03" id="summary-ridge"></div>
+      <div class="bg-jungle__layer" data-par="0.05" id="summary-far"></div>
+      <div class="bg-jungle__layer" data-par="0.12" id="summary-mid"></div>
+      <div class="bg-jungle__mist"></div>
+      <div class="bg-jungle__canopy"></div>
+      <div class="bg-jungle__scan"></div>
+    </div>
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+    <div class="summary">
+      <div class="summary__badgewrap">
+        <div class="badge-glow"></div>
+        <div class="badge" id="summary-badge"></div>
+        <div class="badge-label">INSIGNIA GANADA</div>
+      </div>
+
+      <h2 class="screen-title screen-title--big">¡LO LOGRASTE!</h2>
+      <p class="screen-sub" id="summary-sub">Completaste la Independencia del Perú.</p>
+
+      <div class="summary__grid">
+        <div class="panel summary__stats">
+          <h3 class="panel__title">TU PARTIDA</h3>
+          <div class="res-row"><span>Aciertos</span><b id="stat-correct">0</b></div>
+          <div class="res-row"><span>Errores</span><b id="stat-wrong">0</b></div>
+          <div class="res-row"><span>Tiempo</span><b id="stat-time">0s</b></div>
+          <div class="res-row"><span>Frutas</span><b id="stat-fruits">0</b></div>
+          <div class="summary__fruits" id="summary-fruits"></div>
+        </div>
+
+        <div class="panel summary__learned">
+          <h3 class="panel__title">LO QUE APRENDISTE</h3>
+          <ul class="learned" id="learned-list"></ul>
+        </div>
+      </div>
+
+      <div class="summary__actions">
+        <button class="btn btn--green" id="btn-summary-review">🍃 REPASO RÁPIDO</button>
+        <button class="btn btn--ghost" id="btn-summary-again">JUGAR OTRA VEZ</button>
+        <button class="btn btn--gold" id="btn-summary-menu">MENÚ ▶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== DERROTA ============================ -->
+  <section class="screen screen--over" id="screen-over">
+    <div class="bg-jungle bg-jungle--dim" aria-hidden="true">
+      <div class="bg-jungle__sky"></div>
+      <div class="bg-jungle__sun"></div>
+      <div class="bg-jungle__rays"></div>
+      <div class="bg-jungle__layer bg-jungle__layer--ridge" data-par="0.03" id="over-ridge"></div>
+      <div class="bg-jungle__layer" data-par="0.05" id="over-far"></div>
+      <div class="bg-jungle__layer" data-par="0.12" id="over-mid"></div>
+      <div class="bg-jungle__mist"></div>
+      <div class="bg-jungle__canopy"></div>
+      <div class="bg-jungle__scan"></div>
+    </div>
+    <div class="over">
+      <div class="over__emoji">🍃</div>
+      <h2 class="screen-title screen-title--big">EL CAMINO SE CIERRA</h2>
+      <p class="screen-sub" id="over-sub">Te quedaste sin vidas. ¡La memoria se entrena!</p>
+      <div class="panel over__stats">
+        <div class="res-row"><span>Recuerdos alcanzados</span><b id="over-reached">0/10</b></div>
+        <div class="res-row"><span>Aciertos</span><b id="over-correct">0</b></div>
+        <div class="res-row"><span>Frutas de esta partida</span><b id="over-fruits">0</b></div>
+      </div>
+      <p class="over__tip">Tip: lee el dato curioso de cada respuesta. ¡Vuelve a intentarlo, las opciones cambian!</p>
+      <div class="summary__actions">
+        <button class="btn btn--gold" id="btn-over-retry">REINTENTAR ▶</button>
+        <button class="btn btn--ghost" id="btn-over-menu">MENÚ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== RESCATE ============================ -->
+  <section class="screen screen--rescue" id="screen-rescue">
+    <div class="rescue">
+      <div class="rescue__siren">⏱️</div>
+      <h2 class="screen-title screen-title--big">¡RONDA DE RESCATE!</h2>
+      <p class="screen-sub">Se te acabaron las vidas, pero tu memoria puede salvarte.</p>
+      <div class="panel rescue__rules">
+        <p><b>3 preguntas fáciles.</b> Solo tienes <b>5 segundos</b> en cada una.</p>
+        <p>Si aciertas <b>2 o más</b>, recuperas una vida y sigues el viaje.</p>
+        <p class="rescue__warn">Si fallas... el camino se cierra y empiezas de nuevo.</p>
+      </div>
+      <button class="btn btn--gold btn--xl" id="btn-rescue-start">¡ESTOY LISTO! ▶</button>
+    </div>
+  </section>
+
+  <!-- ======================== MODAL PREGUNTA ======================== -->
+  <div class="modal" id="modal-q" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="qcard panel" id="qcard" role="dialog" aria-modal="true" aria-labelledby="q-text">
+      <div class="qcard__ribbon" id="qcard-mode">RECUERDO 1 DE 10</div>
+
+      <div class="qcard__head">
+        <div class="qcard__who">
+          <span class="qcard__icon" id="q-icon">🔥</span>
+          <div class="qcard__whotext">
+            <span class="qcard__year" id="q-era">1780</span>
+            <span class="qcard__name" id="q-name">Túpac Amaru II</span>
+          </div>
+        </div>
+        <div class="timer" id="timer">
+          <div class="timer__track"><i class="timer__fill" id="timer-fill"></i></div>
+          <span class="timer__num" id="timer-num">10</span>
+        </div>
+      </div>
+
+      <h3 class="qcard__text" id="q-text">...</h3>
+      <div class="options" id="q-options"></div>
+
+      <div class="feedback" id="q-feedback" aria-live="polite" hidden>
+        <p class="feedback__title" id="fb-title"></p>
+        <p class="feedback__fact" id="fb-fact"></p>
+      </div>
+
+      <div class="qcard__foot">
+        <span class="qcard__hint" id="q-hint">Teclas 1 · 2 · 3 o toca una opción</span>
+        <button class="btn btn--gold" id="btn-next" hidden>CONTINUAR ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== MODAL DATO ============================ -->
+  <div class="modal" id="modal-fact" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="panel factcard" role="dialog" aria-modal="true">
+      <span class="factcard__year" id="fact-year">1780</span>
+      <h3 id="fact-name">Túpac Amaru II</h3>
+      <p id="fact-text"></p>
+      <button class="btn btn--green" id="btn-fact-close">CERRAR</button>
+    </div>
+  </div>
+
+  <!-- ========================= MODAL PAUSA ========================== -->
+  <div class="modal" id="modal-pause" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="panel pausecard" role="dialog" aria-modal="true">
+      <h3>PAUSA</h3>
+      <p>Respira. La selva te espera.</p>
+      <button class="btn btn--gold" id="btn-resume">SEGUIR ▶</button>
+      <button class="btn btn--ghost" id="btn-quit">SALIR AL MENÚ</button>
+    </div>
+  </div>
+
+  <!-- ====================== MODAL CÓMO JUGAR ======================= -->
+  <div class="modal" id="modal-how" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="panel howcard" role="dialog" aria-modal="true">
+      <h3>¿CÓMO SE JUEGA?</h3>
+      <ol class="howlist">
+        <li><b>Camina</b> con las flechas ← → o con los botones. Toca un recuerdo para acercarte.</li>
+        <li><b>Despierta el recuerdo</b> y responde en <b>10 segundos</b>.</li>
+        <li>Cada acierto te da una <b>fruta</b>. Tienes <b>3 vidas</b>.</li>
+        <li>Si fallas 3 veces, una <b>ronda de rescate</b> de 5 segundos puede salvarte.</li>
+        <li>Completa los <b>10 recuerdos</b> para ganar tu insignia y desbloquear el siguiente bloque.</li>
+      </ol>
+      <button class="btn btn--gold" id="btn-how-close">ENTENDIDO</button>
+    </div>
+  </div>
+
+  <!-- ====================== MODAL PRÓXIMAMENTE ===================== -->
+  <div class="modal" id="modal-soon" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="panel sooncard" role="dialog" aria-modal="true">
+      <div class="sooncard__icon" id="soon-icon">🏔️</div>
+      <h3 id="soon-title">PRÓXIMAMENTE</h3>
+      <p id="soon-text">Este bloque está en construcción. ¡Ya lo desbloqueaste!</p>
+      <button class="btn btn--green" id="btn-soon-close">VOLVER</button>
+    </div>
+  </div>
+
+  <!-- ====================== MODAL REPASO =========================== -->
+  <div class="modal" id="modal-review" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="panel reviewcard" role="dialog" aria-modal="true">
+      <div class="reviewcard__icon">🍃</div>
+      <h3>REPASO TERMINADO</h3>
+      <p class="reviewcard__label">ACIERTOS</p>
+      <p class="reviewcard__score"><b id="review-score">0 / 5</b></p>
+      <p class="reviewcard__sub" id="review-sub">Cada repaso hace más fuerte tu memoria.</p>
+      <div class="reviewcard__fruits" id="review-fruits"></div>
+      <div class="reviewcard__actions">
+        <button class="btn btn--gold" id="btn-review-again">OTRA RONDA ▶</button>
+        <button class="btn btn--ghost" id="btn-review-home">MENÚ</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<noscript>
+  <div style="padding:24px;font-family:sans-serif;color:#fff;background:#0d2b1f;min-height:100vh">
+    Necesitas activar JavaScript para jugar Memoria Libre.
+  </div>
+</noscript>
+
+<script src="js/data.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
