@@ -21,6 +21,17 @@
   const MARKER_START = 440;
   const MARKER_GAP = 350;
   const WALK_SPEED = 330;
+  const CLIMB_RISE = 320;
+  const MINI_GAMES = [
+    { id: 'stairs', name: 'ESCALADA', hint: 'Salta a la piedra con la respuesta correcta', icons: ['🪨', '🧗', '🪨'] },
+    { id: 'quipu', name: 'QUIPU', hint: 'Ata el nudo que guarda el dato correcto', icons: ['🧶', '🪢', '🧵'] },
+    { id: 'temple', name: 'TEMPLO', hint: 'Abre la puerta que revela la respuesta', icons: ['🚪', '🗿', '✨'] }
+  ];
+
+  function trailBottomAt(x) {
+    const progress = Math.max(0, Math.min(1, (x - MARKER_START) / (MARKER_GAP * (TOTAL_STORY - 1))));
+    return Math.round(200 + CLIMB_RISE * progress);
+  }
 
   /* =============================== GUARDADO ============================== */
   function defaultSave() {
@@ -211,7 +222,7 @@
   }
 
   function buildAllBackgrounds() {
-    const sc = S.build();
+    const sc = S.build({ start: MARKER_START, gap: MARKER_GAP, count: TOTAL_STORY, rise: CLIMB_RISE });
     const bgs = ['#menu-far', '#blocks-far', '#summary-far', '#over-far'];
     bgs.forEach((id) => paintBg($(id), sc.far));
     ['#menu-mid', '#blocks-mid', '#summary-mid', '#over-mid'].forEach((id) => paintBg($(id), sc.mid));
@@ -223,12 +234,12 @@
       paintLayer($(id), sc.fore, '100% 74%');
     });
 
-    paintWorld($('#layer-far'), sc.far, S.W, S.H);
-    paintWorld($('#layer-mid'), sc.mid, S.W, S.H);
-    paintWorld($('#layer-ground'), sc.ground, S.W, S.H);
-    paintWorld($('#layer-props'), sc.props, S.W, S.H);
+    paintWorld($('#layer-far'), sc.andesFar, S.W, S.H);
+    paintWorld($('#layer-mid'), sc.andesMid, S.W, S.H);
+    paintWorld($('#layer-ground'), sc.andesGround, S.W, S.H);
+    paintWorld($('#layer-props'), sc.andesProps, S.W, S.H);
     paintWorld($('#layer-vines'), sc.vines, S.W, 260);
-    paintFlat($('#world-fore'), sc.fore);
+    paintFlat($('#world-fore'), sc.andesFore);
   }
 
   function spawnLeaves(container, n) {
@@ -361,7 +372,7 @@
   }
 
   /* ============================== MUNDO ================================ */
-  const W = { x: 200, cam: 0, targetX: null, targetMarker: null, vw: 0, keys: { left: false, right: false }, last: 0, goShown: false };
+  const W = { x: 200, cam: 0, camY: 0, targetX: null, targetMarker: null, vw: 0, keys: { left: false, right: false }, last: 0, goShown: false };
   const M = [];
 
   const G = {
@@ -402,6 +413,7 @@
       b.type = 'button';
       b.className = 'marker';
       b.style.left = x + 'px';
+      b.style.bottom = trailBottomAt(x) + 'px';
       b.dataset.i = i;
       b.setAttribute('aria-label', 'Recuerdo ' + (i + 1) + ': ' + q.name + ', año ' + q.year);
       b.innerHTML =
@@ -413,7 +425,7 @@
         '<span class="marker__state">RECUERDO ' + (i + 1) + '</span></span>';
       b.addEventListener('click', () => onMarkerClick(i));
       wrap.appendChild(b);
-      M.push({ x: x, el: b, q: q });
+      M.push({ x: x, bottom: trailBottomAt(x), el: b, q: q });
     });
   }
 
@@ -452,10 +464,12 @@
   function resetWorld() {
     W.x = 200;
     W.cam = 0;
+    W.camY = 0;
     W.targetX = null;
     W.keys.left = false;
     W.keys.right = false;
     $('#player').style.left = W.x + 'px';
+    $('#player').style.bottom = trailBottomAt(W.x) + 'px';
     $('#player').dataset.walking = '0';
     $('#player').dataset.facing = 'right';
     const vw = $('#world').clientWidth || window.innerWidth;
@@ -465,10 +479,10 @@
   }
 
   function renderWorld() {
-    $('#stage').style.transform = 'translate3d(' + (-W.cam).toFixed(2) + 'px,0,0)';
-    $('#layer-far').style.transform = 'translate3d(' + (-W.cam * 0.18).toFixed(2) + 'px,0,0)';
-    $('#layer-mid').style.transform = 'translate3d(' + (-W.cam * 0.42).toFixed(2) + 'px,0,0)';
-    $('#layer-vines').style.transform = 'translate3d(' + (-W.cam * 0.3).toFixed(2) + 'px,0,0)';
+    $('#stage').style.transform = 'translate3d(' + (-W.cam).toFixed(2) + 'px,' + W.camY.toFixed(2) + 'px,0)';
+    $('#layer-far').style.transform = 'translate3d(' + (-W.cam * 0.18).toFixed(2) + 'px,' + (W.camY * 0.12).toFixed(2) + 'px,0)';
+    $('#layer-mid').style.transform = 'translate3d(' + (-W.cam * 0.42).toFixed(2) + 'px,' + (W.camY * 0.24).toFixed(2) + 'px,0)';
+    $('#layer-vines').style.transform = 'translate3d(' + (-W.cam * 0.3).toFixed(2) + 'px,' + (W.camY * 0.3).toFixed(2) + 'px,0)';
   }
 
   function walkToMarker(i) {
@@ -526,6 +540,7 @@
     }
 
     $('#player').style.left = W.x.toFixed(1) + 'px';
+    $('#player').style.bottom = trailBottomAt(W.x) + 'px';
 
     // llegada al recuerdo activo
     const m = M[G.idx];
@@ -541,6 +556,9 @@
     const vw = $('#world').clientWidth || window.innerWidth;
     const targetCam = clamp(W.x - vw * 0.45, 0, Math.max(0, STAGE_WIDTH - vw));
     W.cam += (targetCam - W.cam) * Math.min(1, dt * 8);
+    const vh = $('#world').clientHeight || window.innerHeight;
+    const targetCamY = clamp(trailBottomAt(W.x) - vh * 0.4, 0, CLIMB_RISE);
+    W.camY += (targetCamY - W.camY) * Math.min(1, dt * 6);
     renderWorld();
 
     // botón "ir al recuerdo"
@@ -601,13 +619,18 @@
     G.answered = false;
 
     const isRescue = mode === 'rescue';
+    const miniIndex = mode === 'review' ? G.reviewIdx : G.idx;
+    const mini = isRescue
+      ? { id: 'rescue', name: 'RESCATE', hint: 'Elige rápido la pista correcta', icons: ['🪢', '🪶', '🪨'] }
+      : MINI_GAMES[miniIndex % MINI_GAMES.length];
     $('#qcard').classList.toggle('is-rescue', isRescue);
+    $('#qcard').dataset.minigame = mini.id;
     if (isRescue) {
       $('#qcard-mode').textContent = '⚠ RESCATE · 5 SEGUNDOS';
     } else if (G.mode === 'review') {
-      $('#qcard-mode').textContent = 'REPASO · ' + (G.reviewIdx + 1) + ' DE 5';
+      $('#qcard-mode').textContent = mini.name + ' · REPASO ' + (G.reviewIdx + 1) + ' DE 5';
     } else {
-      $('#qcard-mode').textContent = 'RECUERDO ' + (G.idx + 1) + ' DE ' + TOTAL_STORY;
+      $('#qcard-mode').textContent = '⛰ ' + mini.name + ' · ' + (G.idx + 1) + ' DE ' + TOTAL_STORY;
     }
 
     $('#q-icon').textContent = item.icon;
@@ -621,7 +644,18 @@
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'option';
-      b.innerHTML = '<span class="option__key">' + 'ABC'[i] + '</span><span>' + opt.text + '</span>';
+      const icon = document.createElement('span');
+      icon.className = 'option__game-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = mini.icons[i];
+      const key = document.createElement('span');
+      key.className = 'option__key';
+      key.textContent = 'ABC'[i];
+      const label = document.createElement('span');
+      label.className = 'option__text';
+      label.textContent = opt.text;
+      b.append(icon, key, label);
+      b.setAttribute('aria-label', 'Opción ' + 'ABC'[i] + ': ' + opt.text);
       b.addEventListener('click', () => chooseOption(i));
       wrap.appendChild(b);
       return b;
@@ -630,9 +664,7 @@
     $('#q-feedback').hidden = true;
     $('#q-feedback').classList.remove('is-bad');
     $('#btn-next').hidden = true;
-    $('#q-hint').textContent = isRescue
-      ? '¡Rápido! Teclas 1 · 2 · 3 o toca una opción'
-      : 'Teclas 1 · 2 · 3 o toca una opción';
+    $('#q-hint').textContent = mini.hint + ' · teclas 1, 2 o 3';
 
     openModal('#modal-q', false);
     setTimeout(() => {
@@ -816,7 +848,7 @@
     W.targetX = null;
     W.goShown = false;
     $('#btn-go').hidden = true;
-    toast('Sigue el sendero hasta ' + M[G.idx].q.scene + ' y pulsa E.');
+    toast('Escala hasta ' + M[G.idx].q.scene + ' y pulsa E.');
   }
 
   /* ============================== RESCATE ============================== */
@@ -881,7 +913,7 @@
     updateHUD();
     startLoop();
 
-    toast('¡Explora la selva! Acércate al personaje y pulsa E para hablar.');
+    toast('¡Sube por las terrazas! Acércate al guía y pulsa E para hablar.');
   }
 
   function finishStory() {

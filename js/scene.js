@@ -320,7 +320,149 @@ window.SCENE = (function () {
     return '<svg xmlns="http://www.w3.org/2000/svg" class="scene-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" preserveAspectRatio="none" aria-hidden="true">' + out.join('') + '</svg>';
   }
 
-  function build() {
+  function routeY(x, route) {
+    const progress = Math.max(0, Math.min(1, (x - route.start) / (route.gap * (route.count - 1))));
+    return snap(GROUND - route.rise * progress);
+  }
+
+  function mountainSvg(out) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" class="scene-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" preserveAspectRatio="none" aria-hidden="true">' + out.join('') + '</svg>';
+  }
+
+  function andesFar() {
+    const out = [];
+    const ridge = [
+      [0, 590], [220, 560], [360, 485], [480, 410], [550, 480], [760, 590],
+      [960, 570], [1180, 500], [1320, 430], [1450, 500], [1620, 580],
+      [1860, 550], [2050, 470], [2200, 405], [2340, 470], [2520, 570],
+      [2740, 590], [2960, 510], [3120, 430], [3260, 500], [3480, 585],
+      [3680, 560], [3900, 480], [4060, 410], [4200, 500], [4400, 580], [W, 560]
+    ];
+    const ridgePoints = ridge.concat([[W, H], [0, H]]).map((point) => point.join(',')).join(' ');
+    out.push('<polygon points="' + ridgePoints + '" fill="#648b9c"/>');
+
+    [[480, 410], [1320, 430], [2200, 405], [3120, 430], [4060, 410]].forEach((peak) => {
+      const x = peak[0], y = peak[1];
+      out.push('<polygon points="' +
+        (x - 130) + ',' + (y + 136) + ' ' + (x - 62) + ',' + (y + 74) + ' ' +
+        (x - 25) + ',' + (y + 82) + ' ' + x + ',' + y + ' ' +
+        (x + 32) + ',' + (y + 70) + ' ' + (x + 88) + ',' + (y + 92) + ' ' +
+        (x + 142) + ',' + (y + 146) + '" fill="#f3f0d7"/>');
+      out.push('<polygon points="' + x + ',' + y + ' ' + (x + 32) + ',' + (y + 70) + ' ' +
+        (x + 88) + ',' + (y + 92) + ' ' + (x + 142) + ',' + (y + 146) + ' ' +
+        (x + 76) + ',' + (y + 128) + '" fill="#b8d5d4"/>');
+    });
+    for (let i = 0; i < 20; i++) {
+      const x = 180 + i * 218;
+      const y = 110 + (i % 3) * 54;
+      out.push(rect(x, y, 48, 8, '#d6e8df', ' opacity="0.72"'));
+      out.push(rect(x + 12, y - 8, 40, 8, '#d6e8df', ' opacity="0.72"'));
+      out.push(rect(x + 38, y, 32, 8, '#d6e8df', ' opacity="0.72"'));
+    }
+    return mountainSvg(out);
+  }
+
+  function andesMid() {
+    const out = [];
+    for (let x = 0; x < W; x += 24) {
+      const y = snap(560 + Math.sin(x / 290) * 48 + Math.sin(x / 97) * 18);
+      out.push(rect(x, y, 24, H - y, x % 48 ? '#4d7467' : '#5c806c'));
+      out.push(rect(x, y, 24, 8, '#8fa879'));
+    }
+    for (let i = 0; i < 30; i++) {
+      const x = 90 + i * 150;
+      const y = 540 + (i % 4) * 24;
+      out.push(rect(x, y, 72, 8, '#a3b6a0', ' opacity="0.55"'));
+      out.push(rect(x + 16, y - 8, 56, 8, '#a3b6a0', ' opacity="0.55"'));
+    }
+    return mountainSvg(out);
+  }
+
+  function andesGround(route) {
+    const out = [];
+    let points = '0,' + routeY(0, route);
+    for (let x = 32; x <= W; x += 32) points += ' ' + x + ',' + routeY(x, route);
+    points += ' ' + W + ',' + H + ' 0,' + H;
+    out.push('<polygon points="' + points + '" fill="#77604a"/>');
+    for (let x = 0; x < W; x += 24) {
+      const y = routeY(x, route);
+      out.push(rect(x, y, 24, 12, x % 48 ? '#8bb45b' : '#a2c96a'));
+      out.push(rect(x, y + 12, 24, 24, x % 48 ? '#67533f' : '#80664a'));
+      out.push(rect(x + 8, y + 20, 8, 8, '#a28a66'));
+    }
+    return mountainSvg(out);
+  }
+
+  function incaTemple(out, x, base) {
+    const stone = '#a89068';
+    const shade = '#75634d';
+    for (let tier = 0; tier < 4; tier++) {
+      const width = 300 - tier * 40;
+      const y = base - 24 - tier * 28;
+      out.push(rect(x - width / 2, y, width, 22, tier % 2 ? stone : shade));
+      out.push(rect(x - width / 2 - 8, y, width + 16, 8, '#9eb66a'));
+      for (let sx = x - width / 2 + 16; sx < x + width / 2; sx += 32) {
+        out.push(rect(sx, y + 12, 20, 4, '#c2a977'));
+      }
+    }
+    const y = base - 142;
+    out.push(rect(x - 82, y, 164, 58, '#b19b73'));
+    out.push(rect(x - 94, y, 188, 12, '#7b664d'));
+    out.push(rect(x - 70, y - 16, 140, 16, '#c7b183'));
+    out.push(rect(x - 28, y + 20, 56, 38, '#31494a'));
+    out.push(rect(x - 20, y + 24, 40, 34, '#182f37'));
+    out.push(rect(x - 92, y + 8, 12, 50, '#77634b'));
+    out.push(rect(x + 80, y + 8, 12, 50, '#77634b'));
+  }
+
+  function llama(out, x, ground) {
+    out.push(rect(x, ground - 30, 42, 22, '#eee3c7'));
+    out.push(rect(x + 26, ground - 56, 12, 34, '#eee3c7'));
+    out.push(rect(x + 30, ground - 66, 12, 14, '#d4bd96'));
+    out.push(rect(x + 32, ground - 62, 4, 4, '#182522'));
+    out.push(rect(x + 4, ground - 10, 8, 16, '#c9b18b'));
+    out.push(rect(x + 30, ground - 10, 8, 16, '#c9b18b'));
+    out.push(rect(x - 5, ground - 34, 8, 8, '#8fc76b'));
+  }
+
+  function andesProps(route) {
+    const out = [];
+    for (let i = 0; i < route.count; i++) {
+      const x = route.start + i * route.gap;
+      const y = routeY(x, route);
+      for (let tier = 1; tier <= 3; tier++) {
+        const width = 170 + tier * 22;
+        const ty = y + 14 + tier * 24;
+        out.push(rect(x - width / 2, ty, width, 18, tier % 2 ? '#6d5943' : '#887052'));
+        out.push(rect(x - width / 2, ty, width, 6, '#9bac5e'));
+        for (let sx = x - width / 2 + 12; sx < x + width / 2; sx += 30) {
+          out.push(rect(sx, ty + 10, 20, 4, '#b29a70'));
+        }
+      }
+    }
+    const citadelX = route.start + route.gap * 7;
+    incaTemple(out, citadelX, routeY(citadelX, route));
+    llama(out, route.start + route.gap * 2, routeY(route.start + route.gap * 2, route));
+    llama(out, route.start + route.gap * 5, routeY(route.start + route.gap * 5, route));
+    return mountainSvg(out);
+  }
+
+  function andesFore() {
+    const out = [];
+    for (let x = 0; x < W; x += 16) {
+      const h = 16 + Math.abs(Math.sin(x * 0.035)) * 30;
+      out.push(rect(x, H - h, 16, h, x % 32 ? '#31573b' : '#507a42'));
+      if (x % 48 === 0) out.push(rect(x + 4, H - h - 12, 8, 16, '#8bc35b'));
+    }
+    for (let x = 40; x < W; x += 280) {
+      out.push(rect(x, H - 38, 48, 18, '#78674e'));
+      out.push(rect(x + 8, H - 46, 28, 8, '#9e8965'));
+    }
+    return mountainSvg(out);
+  }
+
+  function build(route) {
+    route = route || { start: 440, gap: 350, count: 10, rise: 180 };
     return {
       far: treeLayer(11, 16, { hMin: 300, hMax: 470, wMin: 30, wMax: 46, baseY: GROUND + 10, pal: FAR }),
       mid: treeLayer(29, 13, { hMin: 380, hMax: 610, wMin: 46, wMax: 74, baseY: GROUND + 6, pal: MID }),
@@ -328,7 +470,12 @@ window.SCENE = (function () {
       vines: vinesLayer(),
       props: pathProps(),
       ridge: ridgeLayer(),
-      fore: foreLayer()
+      fore: foreLayer(),
+      andesFar: andesFar(),
+      andesMid: andesMid(),
+      andesGround: andesGround(route),
+      andesProps: andesProps(route),
+      andesFore: andesFore()
     };
   }
 
