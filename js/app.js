@@ -750,6 +750,7 @@
 
     if (ok) {
       G.correct++;
+      if (G.mode === 'rescue') G.rescueScore++;
       Sfx.correct();
       if (G.mode !== 'rescue' && q.fruit) {
         addFruit(q.fruit);
