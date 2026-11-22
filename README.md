@@ -13,6 +13,8 @@ El jugador camina y sube por un paisaje andino ilustrado en pixel art. A lo larg
 
 La idea es que aprender historia se sienta como jugar una aventura, no como estudiar una lista de fechas.
 
+https://www.figma.com/slides/6GrITqS4QOLaFGoH5SDJzv/Memoria-Libre-%E2%80%93-Pitch-Hackathon?node-id=3-25&t=SS37TRBQGQ17o4M7-0
+
 ## 🎮 Cómo se juega
 
 1. **Camina** con las flechas `←` `→` o con los botones en pantalla (en celular). También puedes tocar un recuerdo, o usar el botón "Ir al recuerdo", para acercarte.
