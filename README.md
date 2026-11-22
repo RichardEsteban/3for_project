@@ -9,7 +9,7 @@ Pensado para exploradores de **9 a 13 años**. Corre en cualquier navegador, sin
 
 ## 💡 ¿De qué trata?
 
-El jugador camina por una selva ilustrada en pixel art. A lo largo del camino encuentra **10 "recuerdos"**: personajes y lugares clave de la independencia, en orden cronológico (Túpac Amaru II, el desembarco en Paracas, la proclamación en Lima, Junín, Ayacucho…). Al llegar a cada uno responde una pregunta con tiempo límite. Cada acierto da una **fruta** y un **dato curioso** que explica la respuesta, así se aprende también cuando se falla.
+El jugador camina y sube por un paisaje andino ilustrado en pixel art. A lo largo del camino encuentra **10 "recuerdos"**: personajes y lugares clave de la independencia, en orden cronológico (Túpac Amaru II, el desembarco en Paracas, la proclamación en Lima, Junín, Ayacucho…). Al llegar a cada uno responde una pregunta con tiempo límite. Cada acierto da una **fruta** y un **dato curioso** que explica la respuesta, así se aprende también cuando se falla.
 
 La idea es que aprender historia se sienta como jugar una aventura, no como estudiar una lista de fechas.
 
@@ -37,17 +37,30 @@ Cinco bloques de historia del Perú. Hoy está jugable el Bloque 1; los demás a
 
 ### El mundo
 
-Un escenario con capas de parallax, luciérnagas y hojas cayendo. Cada recuerdo es un personaje con su cartel (año y lugar). Los ya completados quedan marcados con ✔ y se pueden tocar para releer su dato.
+El camino **sube por los Andes**: cada recuerdo queda más arriba que el anterior y la cámara acompaña la subida, con montañas nevadas, capas de parallax, luciérnagas y hojas cayendo. Cada recuerdo es un personaje con su cartel (año y lugar).
 
-![Mundo del juego con los recuerdos](docs/img/03-mundo.jpg)
+![Camino ascendente por los Andes con los recuerdos](docs/img/03-mundo.jpg)
 
-### Preguntas y datos curiosos
+Los recuerdos ya completados quedan marcados como **RECORDADO** y se pueden tocar para releer su dato.
 
-Cada pregunta tiene un cronómetro visible y tres opciones que se **mezclan en cada partida**. Después de responder, el juego muestra la respuesta correcta y un dato que explica el porqué.
+![El jugador avanza y el primer recuerdo queda completado](docs/img/04-ascenso.jpg)
 
-| Pregunta | Respuesta con dato curioso |
+### Preguntas como minijuegos
+
+Cada pregunta tiene un cronómetro visible y tres opciones que se **mezclan en cada partida**. Las opciones se presentan como un minijuego distinto, que rota por recuerdo, para que no se sientan como un examen repetido:
+
+| Minijuego | Pista en pantalla |
 |---|---|
-| ![Pregunta con temporizador](docs/img/04-pregunta.jpg) | ![Respuesta con dato curioso](docs/img/05-dato-curioso.jpg) |
+| **ESCALADA** | Salta a la piedra con la respuesta correcta |
+| **QUIPU** | Ata el nudo que guarda el dato correcto |
+| **TEMPLO** | Abre la puerta que revela la respuesta |
+| **RESCATE** | Elige rápido la pista correcta (ronda de 5 segundos) |
+
+Después de responder, el juego muestra la respuesta correcta y un **dato curioso** que explica el porqué.
+
+| Escalada (se acabó el tiempo) | Quipu (acierto, +1 fruta) |
+|---|---|
+| ![Minijuego de escalada con el dato curioso](docs/img/05-escalada.jpg) | ![Minijuego de quipu con respuesta correcta](docs/img/06-quipu.jpg) |
 
 ## 🧠 Cómo ayuda a recordar
 
@@ -77,7 +90,7 @@ index.html        Pantallas: menú, bloques, juego, resumen, derrota, rescate y 
 css/style.css     Estilos y animaciones
 js/data.js        Contenido histórico: bloques, 10 preguntas con datos curiosos y banco de rescate
 js/sprites.js     Personajes, frutas e insignias en pixel art
-js/scene.js       Capas del paisaje (cielo, montañas, árboles, lianas)
+js/scene.js       Capas del paisaje (cielo, montañas andinas, camino ascendente, vegetación)
 js/app.js         Lógica: mundo, movimiento, preguntas, vidas, rescate, repaso, guardado y sonido
 docs/img/         Capturas usadas en este README
 ```
